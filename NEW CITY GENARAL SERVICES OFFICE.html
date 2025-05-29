@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CITY GENERAL SERVICES OFFICE REQUEST PORTAL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-bg: #f7fafd;
+            --main-green: #1abc9c;
+            --main-blue: #2980b9;
+            --main-dark: #23272f;
+            --main-white: #fff;
+            --main-red: #e74c3c;
+            --main-yellow: #f1c40f;
+            --main-border: #e3e9f0;
+        }
+        html, body {
+            height: 100%;
+        }
+        body {
+            background:
+                linear-gradient(120deg, #23272f 0%, #2980b9 60%, #1abc9c 100%);
+            color: var(--main-dark);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            /* Modern tech pattern: diagonal lines and dots using SVG as background */
+            background: 
+                repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 40px),
+                url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="1.5" fill="%23ffffff22"/><circle cx="0" cy="60" r="1.5" fill="%23ffffff22"/><circle cx="60" cy="0" r="1.5" fill="%23ffffff22"/></svg>');
+            background-size: 100% 100%, 60px 60px;
+            opacity: 1;
+        }
+        .logo-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .logo-bar img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid var(--main-green);
+            background: #fff;
+            box-shadow: 0 2px 12px #1abc9c33;
+        }
+        .container {
+            max-width: 420px;
+            margin: 2.5rem auto;
+            background: var(--main-white);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #1abc9c18;
+            padding: 2.5rem 2rem 2rem 2rem;
+            border: 1px solid var(--main-border);
+        }
+        .dashboard {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: var(--main-white);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #1abc9c18;
+            padding: 2.5rem 2rem 2rem 2rem;
+            border: 1px solid var(--main-border);
+        }
+        h1 {
+            text-align: center;
+            color: #fff !important;
+            margin-bottom: 0.5rem;
+            font-size: 2.7rem;
+            letter-spacing: 2.5px;
+            font-weight: 900;
+            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+            text-shadow:
+                0 4px 24px #1abc9c88,
+                0 2px 8px #2980b9cc,
+                0 1px 0 #23272f,
+                0 0 8px #fff;
+            background: linear-gradient(90deg, #f1c40f 10%, #1abc9c 60%, #2980b9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .container h1 {
+            font-size: 1.7rem;
+            line-height: 2.1rem;
+            padding: 0 0.2rem;
+            word-break: break-word;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--main-green);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: 1.2px;
+            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .tab {
+            flex: none;
+            width: 120px;
+            height: 44px;
+            padding: 0.4rem 0;
+            cursor: pointer;
+            background: var(--main-white);
+            color: var(--main-blue);
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-right: 2px;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--main-border);
+        }
+        .tab.active {
+            background: var(--main-green);
+            color: var(--main-white);
+            border-bottom: 2px solid var(--main-green);
+        }
+        form label {
+            display: block;
+            margin-top: 1rem;
+            margin-bottom: 0.3rem;
+            color: var(--main-blue);
+            font-weight: 600;
+        }
+        form input,
+        form select,
+        form textarea,
+        form button,
+        .form-action-btn {
+            cursor: pointer;
+        }
+        form input,
+        form select,
+        form textarea {
+            width: 100% !important;
+            box-sizing: border-box;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--main-border);
+            margin-bottom: 0.5rem;
+            font-size: 1.08rem;
+            background: #f7fafd;
+            color: var(--main-dark);
+            box-shadow: 0 2px 8px #1abc9c08;
+            transition: border 0.2s;
+            display: block;
+        }
+        form input:focus, form select:focus, form textarea:focus {
+            border: 1.5px solid var(--main-green);
+            outline: none;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            background: rgba(35, 39, 47, 0.10);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #1abc9c08;
+        }
+        .input-group input {
+            background: transparent;
+            border: none;
+            color: var(--main-dark);
+        }
+        .input-group .toggle-pw {
+            margin-left: -2.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--main-blue);
+            font-size: 1.1rem;
+        }
+        .show-pw-link {
+            font-size: 0.95rem;
+            color: var(--main-blue);
+            text-decoration: underline;
+            float: right;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        .form-action-btn {
+            width: 100%;
+            background: var(--main-green);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.9rem 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 1.2rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px #1abc9c18;
+        }
+        .form-action-btn:hover {
+            background: var(--main-blue);
+            color: #fff;
+        }
+        .dashboard {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: var(--main-white);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #1abc9c18;
+            padding: 2.5rem 2rem 2rem 2rem;
+            border: 1px solid var(--main-border);
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 2.5rem;
+        }
+        .dashboard-header h2 {
+            color: #fff !important;
+            background: linear-gradient(90deg, #1abc9c 0%, #2980b9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.3rem;
+            font-weight: 900;
+            text-shadow: 0 4px 24px #1abc9c88, 0 2px 8px #2980b9cc, 0 1px 0 #23272f, 0 0 8px #fff;
+        }
+        .dashboard-header i {
+            color: #f1c40f !important;
+            text-shadow: 0 2px 8px #23272f44, 0 1px 0 #fff;
+        }
+        .dashboard-header .subtitle {
+            text-align: center;
+            color: #f1c40f;
+            font-size: 1.08rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-top: 0.3rem;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 2px 8px #23272f44, 0 1px 0 #fff;
+        }
+        .logout-btn {
+            background: var(--main-blue);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px #1abc9c18;
+        }
+        .logout-btn:hover {
+            background: var(--main-green);
+            color: #fff;
+        }
+        .notif-bell {
+            font-size: 1.7rem;
+            color: var(--main-yellow);
+            margin-left: 1.2rem;
+            margin-right: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+        .notif-bell .notif-dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 13px;
+            height: 13px;
+            background: var(--main-red);
+            border-radius: 50%;
+            border: 2px solid var(--main-dark);
+        }
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        /* Tech design for group box buttons */
+        .service-btn {
+            background: linear-gradient(120deg, #1abc9c 0%, #2980b9 100%);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 2rem 1.2rem;
+            font-size: 1.22rem;
+            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            justify-content: center;
+            box-shadow: 0 8px 32px #1abc9c33, 0 1.5px 0 #fff;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.25s, transform 0.15s, box-shadow 0.2s;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px #23272f66, 0 1px 0 #fff;
+        }
+        .service-btn i {
+            font-size: 2.2rem;
+            color: #f1c40f;
+            filter: drop-shadow(0 2px 8px #23272f44);
+            transition: color 0.2s;
+        }
+        .service-btn:hover, .service-btn:focus {
+            background: linear-gradient(120deg, #2980b9 0%, #1abc9c 100%);
+            color: #fff;
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 12px 36px #1abc9c55, 0 1.5px 0 #fff;
+        }
+        .service-btn:hover i, .service-btn:focus i {
+            color: #fff700;
+        }
+        .section-header {
+            font-size: 1.25rem;
+            color: #fff;
+            background: linear-gradient(90deg, #1abc9c 0%, #2980b9 100%);
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 0.7rem;
+            box-shadow: 0 2px 8px #1abc9c33;
+            text-shadow: 0 2px 8px #23272f44, 0 1px 0 #fff;
+        }
+        .requests-list {
+            margin-top: 1.5rem;
+        }
+        .request-item {
+            background: linear-gradient(90deg, #1abc9c 0%, #2980b9 100%);
+            border-left: 5px solid #f1c40f;
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.2rem;
+            color: #fff;
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: 0 2px 12px #1abc9c33;
+            position: relative;
+        }
+        .request-status {
+            font-weight: 900;
+            font-size: 1.08rem;
+            padding: 0.15rem 0.7rem;
+            border-radius: 7px;
+            background: #fff;
+            display: inline-block;
+        }
+        .request-status.approved {
+            color: #fff !important;
+            background: #27ae60 !important;
+        }
+        .request-status.rejected {
+            color: #fff !important;
+            background: #e74c3c !important;
+        }
+        .request-status.pending {
+            color: #fff !important;
+            background: #f1c40f !important;
+        }
+        .view-btn {
+            background: #23272f;
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 0.5rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-end;
+            margin-top: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px #1abc9c18;
+        }
+        .view-btn:hover {
+            background: #1abc9c;
+            color: #fff;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.35);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #23272f;
+            color: var(--main-green);
+            padding: 2.5rem 3rem;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #27ae6018;
+            max-width: 600px;
+            min-width: 350px;
+            min-height: 400px;
+            text-align: left;
+            position: relative;
+            width: 100%;
+            /* Remove horizontal scroll */
+            overflow-x: hidden;
+        }
+        @media (max-width: 700px) {
+            .modal-content {
+                padding: 1rem 0.5rem;
+                max-width: 98vw;
+                min-width: 0;
+                min-height: 0;
+                border-radius: 10px;
+            }
+        }
+        .service-modal-scroll {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 8px;
+            /* Remove horizontal scroll */
+            overflow-x: hidden;
+        }
+        .form-action-btn {
+            font-size: 1.05rem;
+            padding: 0.7rem 0;
+            min-width: 0;
+            width: auto;
+            margin-top: 0;
+            border-radius: 7px;
+            gap: 0.5rem;
+        }
+        .form-action-btn i {
+            font-size: 1.1rem;
+        }
+        .modal-content .close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 1.3rem;
+            color: #e74c3c;
+            background: #fff;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            border: 2px solid #e74c3c;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 2px 8px #1abc9c18;
+        }
+        .modal-content .close:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        /* Update your .form-action-btn style to ensure all submit/cancel buttons are the same size everywhere */
+        .form-action-btn {
+            width: 100%;
+            background: var(--main-green);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 0.9rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1.2rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            box-sizing: border-box;
+        }
+
+        /* For cancel button in event/social forms, override background if needed */
+        .form-action-btn.cancel-btn {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        /* Make all form fields and selects full width and consistent */
+        form input,
+        form select,
+        form textarea {
+            width: 100% !important;
+            box-sizing: border-box;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--main-border);
+            margin-bottom: 0.5rem;
+            font-size: 1.08rem;
+            background: #f7fafd;
+            color: var(--main-dark);
+            box-shadow: 0 2px 8px #1abc9c08;
+            transition: border 0.2s;
+            display: block;
+        }
+
+        /* Remove any inline or flex sizing for input groups */
+        .input-group {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .input-group input {
+            flex: 1 1 0%;
+            width: 100% !important;
+        }
+        .input-group .toggle-pw {
+            margin-left: -2.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--main-blue);
+            font-size: 1.1rem;
+        }
+
+        /* For button groups in forms, make sure they don't shrink input width */
+        form .input-group,
+        form .input-group input,
+        form .input-group .toggle-pw {
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        /* Responsive fix for mobile */
+        @media (max-width: 600px) {
+            .container, .dashboard, .modal-content {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            form input,
+            form select,
+            form textarea {
+                font-size: 1rem;
+                padding: 0.7rem;
+            }
+        }
+
+        /* Notification Box styles */
+        .notif-box {
+            position: fixed;
+            top: 18px;
+            right: 80px;
+            z-index: 4000;
+            min-width: 270px;
+            max-width: 350px;
+            box-shadow: 0 4px 24px #1abc9c44;
+            border-radius: 10px;
+            display: none;
+            background: #fff;
+            animation: notif-pop 0.3s;
+        }
+        @keyframes notif-pop {
+            from { opacity: 0; transform: translateY(-30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .notif-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: var(--main-green);
+            color: #fff;
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        #notif-content {
+            background: #fff;
+            color: var(--main-dark);
+            padding: 1rem 1.2rem 1rem 1.2rem;
+            border-radius: 0 0 10px 10px;
+            font-size: 1.05rem;
+        }
+
+        /* ...existing code... */
+        .container, .dashboard {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #1abc9c18;
+            padding: 2.5rem 2rem 2rem 2rem;
+            border: 1px solid var(--main-border);
+        }
+        /* ...existing code... */
+        footer {
+            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(90deg, #1abc9c 0%, #2980b9 100%);
+            border-top: 2px solid var(--main-green);
+            padding: 2rem 1rem 1.2rem 1rem;
+            box-shadow: 0 -4px 24px #1abc9c33;
+        }
+        footer span,
+        footer div,
+        footer i {
+            color: #fff !important;
+        }
+        footer .fas.fa-tools {
+            color: #f1c40f !important;
+        }
+        footer .fas.fa-signature {
+            color: #fff !important;
+        }
+
+        /* Add this style for print layout if needed */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #view-modal, #view-modal * {
+                visibility: visible !important;
+            }
+            #view-modal {
+                position: static !important;
+                display: block !important;
+                background: none !important;
+                box-shadow: none !important;
+            }
+            .modal-content {
+                background: #fff !important;
+                color: #000 !important;
+                box-shadow: none !important;
+                min-width: 0 !important;
+                min-height: 0 !important;
+                padding: 1rem !important;
+            }
+            .close, .view-print-btn {
+                display: none !important;
+            }
+        }
+        .approve-btn {
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 0.5rem 1.3rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-right: 0.7rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px #1abc9c18;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .approve-btn:hover {
+            background: #219150;
+        }
+        .reject-btn {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 0.5rem 1.3rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px #1abc9c18;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .reject-btn:hover {
+            background: #c0392b;
+        }
+
+        /* USER DASHBOARD HEADER */
+        .user-dashboard .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 2.5rem;
+        }
+        .user-dashboard .dashboard-header h2 {
+            color: var(--main-blue);
+            font-size: 2rem;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px #1abc9c22, 0 1px 0 #fff;
+            text-align: center;
+        }
+        .user-dashboard .dashboard-header .subtitle {
+            text-align: center;
+            color: #f1c40f;
+            font-size: 1.08rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-top: 0.3rem;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 2px 8px #23272f44, 0 1px 0 #fff;
+        }
+        .user-dashboard .dashboard-header .welcome-msg {
+            text-align: center;
+            color: var(--main-green);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.7rem;
+        }
+        .user-dashboard .dashboard-header .user-position {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-top: 0.2rem;
+            text-align: center;
+        }
+
+        /* ADMIN DASHBOARD HEADER */
+        .admin-dashboard .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 2.5rem;
+        }
+        .admin-dashboard .dashboard-header h2 {
+            color: #fff !important;
+            background: linear-gradient(90deg, #1abc9c 0%, #2980b9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.3rem;
+            font-weight: 900;
+            text-shadow: 0 4px 24px #1abc9c88, 0 2px 8px #2980b9cc, 0 1px 0 #23272f, 0 0 8px #fff;
+        }
+        .admin-dashboard .dashboard-header i {
+            color: #f1c40f !important;
+            text-shadow: 0 2px 8px #23272f44, 0 1px 0 #fff;
+        }
+        .admin-dashboard .dashboard-header .subtitle {
+            text-align: center;
+            color: #f1c40f;
+            font-size: 1.08rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-top: 0.3rem;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 2px 8px #23272f44, 0 1px 0 #fff;
+        }
+        .admin-dashboard .dashboard-header .welcome-msg {
+            text-align: center;
+            color: var(--main-green);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.7rem;
+        }
+        .admin-dashboard .dashboard-header .user-position {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-top: 0.2rem;
+            text-align: center;
+        }
+
+        button, .form-action-btn, .approve-btn, .reject-btn, .view-btn, .logout-btn {
+            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+            font-weight: 900 !important;
+            font-size: 1.08rem !important;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px #23272f44, 0 1px 0 #fff;
+        }
+
+        /* Notification count badge styles */
+        .notif-count-badge {
+            position: absolute;
+            top: -4px;
+            right: -8px;
+            background: var(--main-red);
+            color: #fff;
+            border-radius: 50%;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification Box (move to top and style for visibility) -->
+    <div class="notif-box" id="notif-box" style="position:fixed;top:18px;right:80px;z-index:4000;min-width:270px;max-width:350px;box-shadow:0 4px 24px #1abc9c44;display:none;">
+        <div class="notif-title" style="font-size:1.1rem;font-weight:700;background:var(--main-green);color:#fff;padding:0.7rem 1.2rem;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:0.7rem;">
+            <i class="fas fa-bell"></i> Notification
+        </div>
+        <div id="notif-content" style="background:#fff;color:var(--main-dark);padding:1rem 1.2rem 1rem 1.2rem;border-radius:0 0 10px 10px;font-size:1.05rem;"></div>
+    </div>
+
+    <div class="container" id="auth-section">
+        <div class="title-icon" style="text-align:center;">
+            <i class="fas fa-tools" style="font-size:3rem;color:var(--main-blue);margin-bottom:0.7rem;"></i>
+        </div>
+        <h1>
+            CITY GENERAL SERVICES OFFICE REQUEST PORTAL
+        </h1>
+        <div class="lgu-subtitle" style="text-align:center;color:var(--main-green);font-weight:700;margin-bottom:1.2rem;">
+            LGU ISABELA CITY, BASILAN
+        </div>
+        <div class="tabs">
+            <div class="tab active" id="login-tab" onclick="showTab('login')">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </div>
+            <div class="tab" id="register-tab" onclick="showTab('register')">
+                <i class="fas fa-user-plus"></i> Register
+            </div>
+        </div>
+        <div id="login-form">
+            <form onsubmit="return login(event)">
+                <label for="login-role">Role</label>
+                <select id="login-role" required>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" required>
+                <label for="login-password">Password</label>
+                <div class="input-group">
+                    <input type="password" id="login-password" required>
+                    <span class="toggle-pw" onclick="togglePassword('login-password', this)"><i class="fas fa-eye"></i></span>
+                </div>
+                <span class="show-pw-link" onclick="togglePassword('login-password', this, true)">Show Password</span>
+                <button type="submit" class="form-action-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+        <div id="register-form" style="display:none;">
+            <form onsubmit="return register(event)">
+                <label for="reg-role">Role</label>
+                <select id="reg-role" required>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+                <label for="reg-fullname">Full Name</label>
+                <input type="text" id="reg-fullname" required>
+                <label for="reg-position">Position</label>
+                <input type="text" id="reg-position" required>
+                <label for="reg-contact">Contact Number</label>
+                <input type="text" id="reg-contact" required>
+                <label for="reg-username">Username</label>
+                <input type="text" id="reg-username" required>
+                <label for="reg-password">Password</label>
+                <div class="input-group">
+                    <input type="password" id="reg-password" required>
+                    <span class="toggle-pw" onclick="togglePassword('reg-password', this)"><i class="fas fa-eye"></i></span>
+                </div>
+                <span class="show-pw-link" onclick="togglePassword('reg-password', this, true)">Show Password</span>
+                <button type="submit" class="form-action-btn">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="dashboard" id="admin-dashboard" style="display:none;">
+        <div class="dashboard-header">
+            <div style="width:100%;">
+                <div style="text-align:center;">
+                    <i class="fas fa-tools" style="font-size:2.2rem;color:var(--main-blue);margin-bottom:0.5rem;"></i>
+                </div>
+                <h2 id="admin-dashboard-title" style="text-align:center;line-height:1.2;">
+                    CITY GENERAL SERVICES OFFICE REQUEST PORTAL<br>
+                    <span style="font-size:1.1rem;color:var(--main-green);font-weight:700;letter-spacing:1px;">
+                        (LGU ISABELA CITY, BASILAN)
+                    </span>
+                </h2>
+                <div style="text-align:center;margin-top:1.2rem;">
+                    <span class="subtitle" id="admin-fullname" style="display:block;color:var(--main-green);font-size:1.25rem;font-weight:800;margin-bottom:0.2rem;"></span>
+                    <span class="user-position" id="admin-position" style="display:block;color:#23272f;font-size:1.08rem;font-weight:600;"></span>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;">
+                <!-- Admin Dashboard Notification Bell -->
+                <span class="notif-bell" onclick="showNotifBox()" style="position:relative;">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-dot" id="admin-notif-dot" style="display:none;"></span>
+                    <span id="admin-notif-count" class="notif-count-badge" style="display:none;">0</span>
+                </span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+        <div class="services">
+            <button class="service-btn" onclick="showServiceRequests('building')">
+                <i class="fas fa-building"></i> Building Management & Maintenance
+            </button>
+            <button class="service-btn" onclick="showServiceRequests('motorpool')">
+                <i class="fas fa-truck"></i> Motorpool
+            </button>
+            <button class="service-btn" onclick="showServiceRequests('events')">
+                <i class="fas fa-calendar-alt"></i> Events & Social Services
+            </button>
+            <button class="service-btn" onclick="showServiceRequests('withdrawal')">
+                <i class="fas fa-recycle"></i> Request & Withdrawal Form
+            </button>
+        </div>
+        <div class="section-header"><i class="fas fa-tasks"></i> All Requests</div>
+        <div class="requests-list" id="admin-requests-list"></div>
+
+        <!-- Add below All Requests section in admin dashboard -->
+        <div class="section-header"><i class="fas fa-users"></i> Accounts List</div>
+        <div class="accounts-list" id="accounts-list"></div>
+        <button class="form-action-btn" onclick="printAccounts()" style="max-width:220px;margin:1rem 0 2rem 0;">
+            <i class="fas fa-print"></i> Print Accounts List
+        </button>
+    </div>
+
+    <!-- User Dashboard -->
+    <div class="dashboard" id="user-dashboard" style="display:none;">
+        <div class="dashboard-header" style="flex-direction:column;align-items:flex-start;gap:0.2rem;margin-bottom:2.2rem;">
+            <h2 id="user-dashboard-title" style="color:var(--main-blue);font-size:2rem;font-weight:900;margin:0 0 0.3rem 0;text-align:left;line-height:1.2;">
+                CITY GENERAL SERVICES OFFICE REQUEST PORTAL<br>
+                <span style="font-size:1.1rem;color:var(--main-green);font-weight:700;letter-spacing:1px;">
+                    (LGU ISABELA CITY, BASILAN)
+                </span>
+            </h2>
+            <div style="margin-top:0.2rem;text-align:left;">
+                <span class="subtitle" id="user-fullname" style="display:block;color:var(--main-blue);font-size:1.25rem;font-weight:800;margin-bottom:0.1rem;text-align:left;">
+                    <!-- Filled by JS -->
+                </span>
+            </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+            <div style="flex:1;">
+                <!-- Optional: Add a title or icon here -->
+            </div>
+            <div style="display:flex;align-items:center;">
+                <!-- User Dashboard Notification Bell -->
+                <span class="notif-bell" onclick="showNotifBox()" style="position:relative;">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-dot" id="user-notif-dot" style="display:none;"></span>
+                    <span id="user-notif-count" class="notif-count-badge" style="display:none;">0</span>
+                </span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+        <div class="services">
+            <button class="service-btn" onclick="openServiceModal('building')">
+                <i class="fas fa-building"></i> Building Management & Maintenance
+            </button>
+            <button class="service-btn" onclick="openServiceModal('motorpool')">
+                <i class="fas fa-truck"></i> Motorpool
+            </button>
+            <button class="service-btn" onclick="openServiceModal('events')">
+                <i class="fas fa-calendar-alt"></i> Events & Social Services
+            </button>
+            <button class="service-btn" onclick="openServiceModal('withdrawal')">
+                <i class="fas fa-recycle"></i> Request & Withdrawal Form
+            </button>
+        </div>
+        <div class="section-header"><i class="fas fa-tasks"></i> My Requests</div>
+        <div class="requests-list" id="user-requests-list"></div>
+    </div>
+
+    <!-- Modal for Service Request Form -->
+    <div id="service-modal" class="modal">
+        <div class="modal-content" id="service-modal-content">
+            <span class="close" onclick="closeServiceModal()">&times;</span>
+            <div id="service-form-section" class="service-modal-scroll"></div>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Request Details -->
+    <div id="view-modal" class="modal">
+        <div class="modal-content" id="view-modal-content">
+            <span class="close" onclick="closeViewModal()">&times;</span>
+            <div id="view-details-section"></div>
+        </div>
+    </div>
+
+    <!-- Modal for Reject Reason -->
+    <div id="reject-modal" class="modal">
+        <div class="modal-reject-content" id="reject-modal-content">
+            <span class="close" onclick="closeRejectModal()">&times;</span>
+            <h3 style="color:var(--main-red);margin-top:0;">Reject Request</h3>
+            <form onsubmit="return submitReject()">
+                <label for="reject-reason" style="color:var(--main-red);">Reason for rejection:</label>
+                <textarea id="reject-reason" required rows="3" style="background:#181c22;color:#fff;"></textarea>
+                <button type="submit" class="reject-btn" style="margin-top:1rem;"><i class="fas fa-times"></i> Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Sound -->
+    <audio id="notif-sound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae6e3.mp3"></audio>
+
+    <script>
+    // In-memory demo data
+    let users = [];
+    let requests = [];
+    let currentUser = null;
+    let manpowerArr = [];
+    // let rejectIdx = null; // Removed duplicate declaration to avoid redeclaration error
+    let otherEquipments = [];
+
+    // Tab switching for login/register
+    function showTab(tab) {
+        document.getElementById('login-tab').classList.remove('active');
+        document.getElementById('register-tab').classList.remove('active');
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('register-form').style.display = 'none';
+        if (tab === 'login') {
+            document.getElementById('login-tab').classList.add('active');
+            document.getElementById('login-form').style.display = '';
+        } else {
+            document.getElementById('register-tab').classList.add('active');
+            document.getElementById('register-form').style.display = '';
+        }
+    }
+
+    // Show/hide password
+    function togglePassword(inputId, el, forceShow) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        if (forceShow || input.type === "password") {
+            input.type = "text";
+            if (el && el.querySelector) {
+                const icon = el.querySelector('i');
+                if (icon) icon.className = "fas fa-eye-slash";
+            }
+        } else {
+            input.type = "password";
+            if (el && el.querySelector) {
+                const icon = el.querySelector('i');
+                if (icon) icon.className = "fas fa-eye";
+            }
+        }
+    }
+
+    // Registration
+    function register(e) {
+        e.preventDefault();
+        const user = {
+            role: document.getElementById('reg-role').value,
+            fullname: document.getElementById('reg-fullname').value,
+            position: document.getElementById('reg-position').value,
+            contact: document.getElementById('reg-contact').value,
+            username: document.getElementById('reg-username').value,
+            password: document.getElementById('reg-password').value
+        };
+        if (users.find(u => u.username === user.username)) {
+            alert('Username already exists!');
+            return false;
+        }
+        // Replace users.push(user) with:
+        fetch('http://localhost:3001/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) return alert(data.error);
+            alert('Registration successful! You can now login.');
+            showTab('login');
+        });
+        return false;
+    }
+
+    // Login
+    function login(e) {
+        e.preventDefault();
+        const role = document.getElementById('login-role').value;
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        fetch('http://localhost:3001/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password, role })
+        })
+        .then(res => res.json())
+        .then(user => {
+            if (user.error) return alert(user.error);
+            currentUser = user;
+            document.getElementById('auth-section').style.display = 'none';
+            if (user.role === 'admin') {
+                document.getElementById('admin-dashboard').style.display = '';
+                document.getElementById('user-dashboard').style.display = 'none';
+                // Set full name and position in one line, position in parentheses, both in main-blue
+                document.getElementById('admin-fullname').innerHTML =
+                    `Welcome, ${currentUser.fullname} <span style="color:var(--main-blue);font-weight:600;">(${currentUser.position})</span>`;
+                renderAdminRequests();
+                updateNotifBell();
+            } else {
+                document.getElementById('user-dashboard').style.display = '';
+                document.getElementById('admin-dashboard').style.display = 'none';
+                document.getElementById('user-fullname').innerHTML =
+                    `Welcome, ${currentUser.fullname} <span style="color:var(--main-blue);font-weight:600;">(${currentUser.position})</span>`;
+                renderUserRequests();
+                updateNotifBell();
+            }
+        });
+        return false;
+    }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('auth-section').style.display = '';
+        document.getElementById('admin-dashboard').style.display = 'none';
+        document.getElementById('user-dashboard').style.display = 'none';
+        showTab('login');
+    }
+
+    // Service request modal logic
+    function openServiceModal(type) {
+        showServiceForm(type);
+        document.getElementById('service-modal').style.display = 'flex';
+    }
+    function closeServiceModal() {
+        document.getElementById('service-modal').style.display = 'none';
+        document.getElementById('service-form-section').innerHTML = '';
+        manpowerArr = [];
+    }
+
+    // Show service request form
+    function showServiceForm(type) {
+        let html = '';
+        if (type === 'building') {
+            manpowerArr = [];
+            html = `
+                <h3 style="color:#27ae60;"><i class="fas fa-building"></i> Building Management & Maintenance</h3>
+                <form id="building-form">
+                    <label>Request Type</label>
+                    <select id="building-type" required>
+                        <option value="electrical">Electrical Manpower</option>
+                        <option value="janitorial">Janitorial/Street Sweeper</option>
+                        <option value="drainage">Drainage</option>
+                        <option value="driver">Office Driver & Vehicle Equipment</option>
+                        <option value="plumbing">Plumbing</option>
+                        <option value="carpentry">Carpentry & Painting</option>
+                        <option value="vegetation">Vegetation Control</option>
+                        <option value="security">Security</option>
+                    </select>
+                    <label>Purpose</label>
+                    <input type="text" id="building-purpose" required>
+                    <label>Location</label>
+                    <input type="text" id="building-location" required>
+                    <label>Other Request</label>
+                    <input type="text" id="building-other">
+                    <label>Manpower List</label>
+                    <div id="manpower-list"></div>
+                    <div style="display:flex;gap:0.5rem;">
+                        <input type="text" id="manpower-name" placeholder="Name" style="flex:2;">
+                        <input type="text" id="manpower-remarks" placeholder="Remarks/Availability" style="flex:2;">
+                        <button type="button" onclick="addManpower()" style="flex:1;background:#27ae60;color:#fff;border:none;border-radius:6px;">Add</button>
+                    </div>
+                    <label>Date Needed</label>
+                    <input type="date" id="building-date" required>
+                    <label>Time Needed</label>
+                    <input type="time" id="building-time" required>
+                    <label>Requester</label>
+                    <input type="text" id="building-requester" value="${currentUser.fullname}" required>
+                    <label>Contact</label>
+                    <input type="text" id="building-contact" value="${currentUser.contact}" required>
+                    <button type="submit" class="form-action-btn"><i class="fas fa-paper-plane"></i> Submit Request</button>
+                </form>
+            `;
+        } else if (type === 'motorpool') {
+            html = `
+                <h3 style="color:#27ae60;"><i class="fas fa-truck"></i> Motorpool Request</h3>
+                <form id="motorpool-form">
+                    <label>Purpose</label>
+                    <input type="text" id="motorpool-purpose" required>
+                    <label>Requester</label>
+                    <input type="text" id="motorpool-requester" value="${currentUser.fullname}" required>
+                    <label>Contact</label>
+                    <input type="text" id="motorpool-contact" value="${currentUser.contact}" required>
+                    <button type="submit" class="form-action-btn"><i class="fas fa-paper-plane"></i> Submit Request</button>
+                </form>
+            `;
+        } else if (type === 'events') {
+            otherEquipments = [];
+            html = `
+                <h3 style="color:#27ae60;"><i class="fas fa-calendar-alt"></i> Events & Social Services</h3>
+                <form id="events-form">
+                    <label>Request Type</label>
+                    <select id="events-type" required>
+                        <option value="events">Events</option>
+                        <option value="social">Social Services</option>
+                        <option value="qrt">Quick Response Team</option>
+                    </select>
+                    <div id="events-details"></div>
+                    <label>Date</label>
+                    <input type="date" id="events-date" required>
+                    <label>Purpose</label>
+                    <input type="text" id="events-purpose" required>
+                    <label>Requester</label>
+                    <input type="text" id="events-requester" value="${currentUser.fullname}" required>
+                    <label>Contact</label>
+                    <input type="text" id="events-contact" value="${currentUser.contact}" required>
+                    <label>Address</label>
+                    <input type="text" id="events-address" required>
+                    <label>Office/Agency</label>
+                    <input type="text" id="events-office" required>
+                    <button type="submit" class="form-action-btn" style="flex:1;"><i class="fas fa-paper-plane"></i> Submit Request</button>
+                </form>
+            `;
+        } else if (type === 'withdrawal') {
+            html = `
+                <h3 style="color:#27ae60;"><i class="fas fa-recycle"></i> Solid Waste Management Request & Withdrawal</h3>
+                <form id="withdrawal-form">
+                    <label>Request Option</label>
+                    <select id="withdrawal-option" required onchange="renderWithdrawalDetails()">
+                        <option value="">-- Select Option --</option>
+                        <option value="eco-bricks">Eco Bricks</option>
+                        <option value="eco-blocks">Eco Blocks</option>
+                        <option value="top-soil">Top Soil</option>
+                        <option value="vermi-compost">Vermi-Compost</option>
+                        <option value="soil-enhancer">Soil Enhancer</option>
+                        <option value="sacks">Sacks</option>
+                        <option value="vehicle-medium-dumptruck">Medium Dumptruck</option>
+                        <option value="vehicle-small-dumptruck">Small Dumptruck</option>
+                        <option value="vehicle-double-cab">Double Cab</option>
+                    </select>
+                    <div id="withdrawal-details"></div>
+                    <label>Purpose</label>
+                    <input type="text" id="withdrawal-purpose" required>
+                    <label>Requester Name</label>
+                    <input type="text" id="withdrawal-requester" value="${currentUser.fullname}" required>
+                    <label>Contact Number</label>
+                    <input type="text" id="withdrawal-contact" value="${currentUser.contact}" required>
+                    <label>Address</label>
+                    <input type="text" id="withdrawal-address" required>
+                    <button type="submit" class="form-action-btn"><i class="fas fa-paper-plane"></i> Submit Request</button>
+                </form>
+            `;
+        }
+        document.getElementById('service-form-section').innerHTML = html;
+        if (type === 'building') {
+            renderManpower();
+            document.getElementById('building-form').onsubmit = function(e) {
+                e.preventDefault();
+                submitRequest('building', {
+                    service: document.getElementById('building-type').value,
+                    purpose: document.getElementById('building-purpose').value,
+                    location: document.getElementById('building-location').value,
+                    other: document.getElementById('building-other').value,
+                    manpower: [...manpowerArr],
+                    date: document.getElementById('building-date').value,
+                    time: document.getElementById('building-time').value,
+                    requester: document.getElementById('building-requester').value,
+                    contact: document.getElementById('building-contact').value
+                });
+            };
+        } else if (type === 'motorpool') {
+            document.getElementById('motorpool-form').onsubmit = function(e) {
+                e.preventDefault();
+                submitRequest('motorpool', {
+                    purpose: document.getElementById('motorpool-purpose').value,
+                    requester: document.getElementById('motorpool-requester').value,
+                    contact: document.getElementById('motorpool-contact').value
+                });
+            };
+        } else if (type === 'events') {
+            renderEventsDetails();
+            document.getElementById('events-type').onchange = renderEventsDetails;
+            document.getElementById('events-form').onsubmit = function(e) {
+                e.preventDefault();
+                let details = {
+                    requestType: document.getElementById('events-type').value,
+                    date: document.getElementById('events-date').value,
+                    purpose: document.getElementById('events-purpose').value,
+                    requester: document.getElementById('events-requester').value,
+                    contact: document.getElementById('events-contact').value,
+                    address: document.getElementById('events-address').value,
+                    office: document.getElementById('events-office').value
+                };
+                if (details.requestType === 'events') {
+                    details.venue = document.getElementById('events-venue').value;
+                    details.paymentOrder = document.getElementById('events-payment-order').value;
+                    details.time = document.getElementById('events-time').value;
+                    // Venue reservation conflict check
+                    if (requests.some(r =>
+                        r.type === 'events' &&
+                        r.details.requestType === 'events' &&
+                        r.details.venue === details.venue &&
+                        r.details.date === details.date &&
+                        r.details.time === details.time &&
+                        r.status !== 'rejected'
+                    )) {
+                        alert('Venue is already reserved for this date and time!');
+                        return false;
+                    }
+                } else if (details.requestType === 'social') {
+                    details.socialType = document.getElementById('social-type').value;
+                    details.socialQty = document.getElementById('social-qty').value;
+                    details.socialCondition = document.getElementById('social-condition').value;
+                    if (details.socialType === 'others') {
+                        details.otherEquipments = [...otherEquipments];
+                    } else {
+                        details.otherEquipments = [];
+                    }
+                }
+                submitRequest('events', details);
+            };
+        } else if (type === 'withdrawal') {
+            document.getElementById('withdrawal-form').onsubmit = function(e) {
+                e.preventDefault();
+                const option = document.getElementById('withdrawal-option').value;
+                const details = {
+                    option,
+                    purpose: document.getElementById('withdrawal-purpose').value,
+                    requester: document.getElementById('withdrawal-requester').value,
+                    contact: document.getElementById('withdrawal-contact').value,
+                    address: document.getElementById('withdrawal-address').value
+                };
+                // Add quantity or driver if needed
+                if (option === 'eco-bricks' || option === 'eco-blocks' || option === 'vermi-compost' || option === 'sacks') {
+                    details.qty = document.getElementById('withdrawal-qty').value;
+                }
+                if (option.startsWith('vehicle-')) {
+                    details.driver = document.getElementById('withdrawal-driver').value;
+                }
+                submitRequest('withdrawal', details);
+            };
+            // Render details if option is preselected
+            if (document.getElementById('withdrawal-option')) {
+                document.getElementById('withdrawal-option').addEventListener('change', renderWithdrawalDetails);
+            }
+        }
+    }
+
+    function renderManpower() {
+        let html = '';
+        manpowerArr.forEach((mp, idx) => {
+            html += `<div style="display:flex;gap:0.5rem;margin-bottom:0.3rem;">
+                <span style="flex:2;">${mp.name}</span>
+                <span style="flex:2;">${mp.remarks}</span>
+                <button type="button" onclick="removeManpower(${idx})" style="flex:1;background:#e74c3c;color:#fff;border:none;border-radius:6px;">Remove</button>
+            </div>`;
+        });
+        document.getElementById('manpower-list').innerHTML = html;
+    }
+    function addManpower() {
+        const name = document.getElementById('manpower-name').value.trim();
+        const remarks = document.getElementById('manpower-remarks').value.trim();
+        if (!name) return;
+        manpowerArr.push({ name, remarks });
+        document.getElementById('manpower-name').value = '';
+        document.getElementById('manpower-remarks').value = '';
+        renderManpower();
+    }
+    function removeManpower(idx) {
+        manpowerArr.splice(idx, 1);
+        renderManpower();
+    }
+
+    function renderEventsDetails() {
+        const type = document.getElementById('events-type').value;
+        let html = '';
+        if (type === 'events') {
+            html = `
+                <label>Venue</label>
+                <select id="events-venue" required>
+                    <option value="Isabela City Gymnasium">Isabela City Gymnasium</option>
+                    <option value="Isabela City Plaza">Isabela City Plaza</option>
+                    <option value="Fuego2x Park">Fuego2x Park</option>
+                    <option value="Isabela East Terminal">Isabela East Terminal</option>
+                    <option value="Isabela West Terminal">Isabela West Terminal</option>
+                    <option value="PCC">PCC</option>
+                    <option value="Infirmary">Infirmary</option>
+                </select>
+                <label>Payment Order</label>
+                <input type="text" id="events-payment-order" required>
+                <label>Time</label>
+                <input type="time" id="events-time" required>
+            `;
+            otherEquipments = [];
+        } else if (type === 'social') {
+            html = `
+                <label>Social Service Type</label>
+                <select id="social-type" required>
+                    <option value="burial">Burial Interment</option>
+                    <option value="coffin">Coffin</option>
+                    <option value="canopy">Canopy</option>
+                    <option value="tent">Tent</option>
+                    <option value="tables">Tables</option>
+                    <option value="chairs">Chairs</option>
+                    <option value="vehicle">Vehicle</option>
+                    <option value="sound">Sound System</option>
+                    <option value="others">Others</option>
+                </select>
+                <div id="other-equipment-fields" style="display:none;">
+                    <label>Specify Equipment</label>
+                    <input type="text" id="other-equipment-name">
+                    <label>Quantity</label>
+                    <input type="number" id="other-equipment-qty" min="1">
+                    <button type="button" onclick="addOtherEquipment()" style="background:#27ae60;color:#fff;border:none;border-radius:6px;margin-top:0.5rem;"><i class="fas fa-plus"></i> Add Equipment</button>
+                </div>
+                <div id="other-equipment-list"></div>
+                <label>Quantity</label>
+                <input type="number" id="social-qty" required>
+                <label>Condition</label>
+                <input type="text" id="social-condition" required>
+            `;
+            renderOtherEquipmentList();
+        }
+        document.getElementById('events-details').innerHTML = html;
+
+        if (type === 'social') {
+            document.getElementById('social-type').onchange = function() {
+                const val = this.value;
+                document.getElementById('other-equipment-fields').style.display = val === 'others' ? '' : 'none';
+                if (val !== 'others') {
+                    otherEquipments = [];
+                    renderOtherEquipmentList();
+                }
+            };
+            renderOtherEquipmentList();
+        }
+    }
+
+    function addOtherEquipment() {
+        const name = document.getElementById('other-equipment-name').value.trim();
+        const qty = document.getElementById('other-equipment-qty').value.trim();
+        if (!name || !qty) return;
+        otherEquipments.push({ name, qty });
+        renderOtherEquipmentList();
+        document.getElementById('other-equipment-name').value = '';
+        document.getElementById('other-equipment-qty').value = '';
+    }
+    function renderOtherEquipmentList() {
+        const list = document.getElementById('other-equipment-list');
+        if (!list) return;
+        list.innerHTML = otherEquipments.map((e, i) =>
+            `<div style="color:#fff;">${e.name} (Qty: ${e.qty}) <button onclick="removeOtherEquipment(${i})" style="background:#e74c3c;color:#fff;border:none;border-radius:6px;">Remove</button></div>`
+        ).join('');
+    }
+    function removeOtherEquipment(idx) {
+        otherEquipments.splice(idx, 1);
+        renderOtherEquipmentList();
+    }
+
+    // Submit request
+    function submitRequest(type, details) {
+        const req = {
+            type,
+            status: 'pending',
+            user: currentUser.fullname,
+            details,
+            created: new Date().toISOString(),
+            rejectReason: ''
+        };
+        requests.push(req);
+
+        // Show notification
+        showUserNotification('Your request has been submitted!');
+        // Close modal after a short delay
+        setTimeout(closeServiceModal, 1200);
+
+        // Refresh requests from server
+        fetch('http://localhost:3001/api/requests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req)
+        })
+        .then(res => res.json())
+        .then(data => {
+            showUserNotification('Your request has been submitted!');
+            setTimeout(closeServiceModal, 1200);
+            // Refresh requests from server
+            fetch('http://localhost:3001/api/requests')
+                .then(res => res.json())
+                .then(data => {
+                    requests = data;
+                    renderUserRequests();
+                    renderAdminRequests();
+                    updateNotifBell();
+                });
+            notifyAdmin({user: currentUser.fullname, type});
+        });
+    }
+
+    // Add this function if not present, or update to make it visible and auto-hide
+    function showUserNotification(msg) {
+        let notif = document.getElementById('notif-box');
+        notif.querySelector('.notif-title').innerHTML = '<i class="fas fa-bell"></i> Notification';
+        document.getElementById('notif-content').innerHTML = `<div class="notif-item">${msg}</div>`;
+        notif.style.display = 'block';
+        setTimeout(() => {
+            notif.style.display = 'none';
+        }, 2000);
+    }
+
+    // Render user requests
+    function renderUserRequests() {
+        const list = document.getElementById('user-requests-list');
+        const myReqs = requests.filter(r => r.user === currentUser.fullname);
+        if (myReqs.length === 0) {
+            list.innerHTML = `<div style="color:#fff;font-size:1.2rem;font-weight:700;text-align:center;padding:2rem 0;text-shadow:0 2px 8px #1abc9c99,0 1px 0 #23272f;">No requests yet.</div>`;
+            return;
+        }
+        list.innerHTML = myReqs.map(r => {
+            const realIdx = requests.indexOf(r);
+            return `
+                <div class="request-item">
+                    <div><b>Type:</b> ${capitalize(r.type)}</div>
+                    <div><b>Status:</b> <span class="request-status ${r.status}">${capitalize(r.status)}</span></div>
+                    <div><b>Details:</b> ${formatDetails(r)}</div>
+                    ${r.status === 'rejected' && r.rejectReason ? `<div style="color:var(--main-red);"><b>Rejected Reason:</b> ${r.rejectReason}</div>` : ''}
+                    <button class="view-btn" onclick="viewRequest(${realIdx})"><i class="fas fa-eye"></i> View</button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderAdminRequests() {
+        const list = document.getElementById('admin-requests-list');
+        if (!list) return;
+        if (requests.length === 0) {
+            list.innerHTML = `<div style="color:#23272f;font-size:1.2rem;font-weight:700;text-align:center;padding:2rem 0;">No requests yet.</div>`;
+            return;
+        }
+        list.innerHTML = requests.map((r, idx) => `
+            <div class="request-item">
+                <div><b>User:</b> <span style="color:#fff;">${r.user}</span></div>
+                <div><b>Type:</b> ${capitalize(r.type)}</div>
+                <div><b>Status:</b> <span class="request-status">${capitalize(r.status)}</span></div>
+                <div><b>Details:</b> ${formatDetails(r)}</div>
+                ${r.status === 'rejected' && r.rejectReason ? `<div style="color:var(--main-red);"><b>Rejected Reason:</b> ${r.rejectReason}</div>` : ''}
+                <button class="view-btn" onclick="viewRequest(${idx})"><i class="fas fa-eye"></i> View</button>
+                ${r.status === 'pending' ? `
+                    <div style="margin-top:0.7rem;">
+                        <button class="approve-btn" onclick="approveRequest(${idx})"><i class="fas fa-check"></i> Approve</button>
+                        <button class="reject-btn" onclick="openRejectModal(${idx})"><i class="fas fa-times"></i> Reject</button>
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+        renderAccountsList();
+    }
+
+    // Track admin who approved
+    let lastApprover = null;
+
+    // Modify approveRequest to store admin fullname
+    function approveRequest(idx) {
+        const req = requests[idx];
+        fetch(`http://localhost:3001/api/requests/${req.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'approved', rejectReason: '', approvedBy: currentUser.fullname })
+        })
+        .then(res => res.json())
+        .then(() => {
+            fetch('http://localhost:3001/api/requests')
+                .then(res => res.json())
+                .then(data => {
+                    requests = data;
+                    renderAdminRequests();
+                    renderUserRequests();
+                    updateNotifBell();
+                });
+        });
+    }
+
+    // Update viewRequest to show print button and admin name if approved
+    function viewRequest(idx) {
+        const r = requests[idx];
+        // Format the date
+        const dateSubmitted = new Date(r.created).toLocaleString();
+
+        let html = `
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.7rem;">
+                <div>
+                    <b>User:</b> <span style="color:#fff;">${r.user}</span>
+                </div>
+                <div style="color:#2980b9;font-size:0.98rem;text-align:right;">
+                    <b>Date Submitted:</b> <span>${dateSubmitted}</span>
+                </div>
+            </div>
+            <div style="margin-bottom:0.7rem;"><b>Type:</b> <span style="color:#fff;">${capitalize(r.type)}</span></div>
+            <div style="margin-bottom:0.7rem;"><b>Status:</b> <span class="request-status" style="color:#fff;">${capitalize(r.status)}</span></div>
+        `;
+
+        if (r.type === 'building') {
+            html += `
+                <div style="margin-bottom:0.7rem;"><b>Service:</b> <span style="color:#fff;">${capitalize(r.details.service)}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Location:</b> <span style="color:#fff;">${r.details.location}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Date Needed:</b> <span style="color:#fff;">${r.details.date}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Time Needed:</b> <span style="color:#fff;">${r.details.time}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Other Request:</b> <span style="color:#fff;">${r.details.other || '-'}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Manpower Assigned:</b> <span style="color:#fff;">${
+                    r.details.manpower && r.details.manpower.length
+                        ? r.details.manpower.map(m => m.name + (m.remarks ? ` (${m.remarks})` : '')).join(', ')
+                        : 'None'
+                }</span></div>
+            `;
+        } else if (type === 'motorpool') {
+            html += `
+                <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
+            `;
+        } else if (r.type === 'events') {
+            if (r.details.requestType === 'events') {
+                html += `
+                    <div style="margin-bottom:0.7rem;"><b>Venue:</b> <span style="color:#fff;">${r.details.venue}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Payment Order:</b> <span style="color:#fff;">${r.details.paymentOrder}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Date:</b> <span style="color:#fff;">${r.details.date}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Time:</b> <span style="color:#fff;">${r.details.time || ''}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Office/Agency:</b> <span style="color:#fff;">${r.details.office}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Address:</b> <span style="color:#fff;">${r.details.address}</span></div>
+                `;
+            } else if (r.details.requestType === 'social') {
+                html += `
+                    <div style="margin-bottom:0.7rem;"><b>Social Service Type:</b> <span style="color:#fff;">${r.details.socialType}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Quantity:</b> <span style="color:#fff;">${r.details.socialQty}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Condition:</b> <span style="color:#fff;">${r.details.socialCondition}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Date:</b> <span style="color:#fff;">${r.details.date}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Office/Agency:</b> <span style="color:#fff;">${r.details.office}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Address:</b> <span style="color:#fff;">${r.details.address}</span></div>
+                    ${
+                        r.details.socialType === 'others' && r.details.otherEquipments && r.details.otherEquipments.length
+                            ? `<div style="margin-bottom:0.7rem;"><b>Other Equipments:</b> <span style="color:#fff;">${r.details.otherEquipments.map(e => `${e.name} (Qty: ${e.qty})`).join(', ')}</span></div>`
+                            : ''
+                    }
+                `;
+            } else {
+                html += `
+                    <div style="margin-bottom:0.7rem;"><b>Date:</b> <span style="color:#fff;">${r.details.date}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Office/Agency:</b> <span style="color:#fff;">${r.details.office}</span></div>
+                    <div style="margin-bottom:0.7rem;"><b>Address:</b> <span style="color:#fff;">${r.details.address}</span></div>
+                `;
+            }
+        } else if (r.type === 'withdrawal') {
+            let optionMap = {
+                'eco-bricks': 'Eco Bricks',
+                'eco-blocks': 'Eco Blocks',
+                'top-soil': 'Top Soil',
+                'vermi-compost': 'Vermi-Compost',
+                'soil-enhancer': 'Soil Enhancer',
+                'sacks': 'Sacks',
+                'vehicle-medium-dumptruck': 'Medium Dumptruck',
+                'vehicle-small-dumptruck': 'Small Dumptruck',
+                'vehicle-double-cab': 'Double Cab'
+            };
+            html += `
+                <div style="margin-bottom:0.7rem;"><b>Request Option:</b> <span style="color:#fff;">${optionMap[r.details.option] || r.details.option}</span></div>
+                ${r.details.qty ? `<div style="margin-bottom:0.7rem;"><b>Quantity:</b> <span style="color:#fff;">${r.details.qty} ${r.details.option === 'eco-bricks' || r.details.option === 'eco-blocks' ? 'pcs' : 'kg'}</span></div>` : ''}
+
+                ${r.details.driver ? `<div style="margin-bottom:0.7rem;"><b>Driver Assigned:</b> <span style="color:#fff;">${r.details.driver}</span></div>` : ''}
+                <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
+                <div style="margin-bottom:0.7rem;"><b>Address:</b> <span style="color:#fff;">${ r.details.address}</span></div>
+            `;
+        }
+
+        // Insert this after all details:
+
+        if (r.status === 'approved' && r.approvedBy) {
+            html += `<div style="margin-bottom:0.7rem;"><b>Approved By:</b> <span style="color:#1abc9c;">${r.approvedBy}</span></div>
+            <button class="view-print-btn" onclick="window.print()" style="margin-top:1rem;background:#1abc9c;color:#fff;border:none;border-radius:7px;padding:0.6rem 1.5rem;font-size:1.1rem;font-weight:600;cursor:pointer;">
+                <i class="fas fa-print"></i> Print
+            </button>`;
+        }
+
+        if (r.status === 'rejected' && r.rejectReason) {
+            html += `<div style="color:var(--main-red);margin-bottom:0.7rem;"><b>Rejected Reason:</b> ${r.rejectReason}</div>`;
+        }
+        html += `<div style="margin-bottom:0.7rem;"><b>Date Submitted:</b> <span style="color:#2980b9;">${new Date(r.created).toLocaleString()}</span></div>`;
+
+        document.getElementById('view-details-section').innerHTML = html;
+        document.getElementById('view-modal').style.display = 'flex';
+    }
+    function closeViewModal() {
+        document.getElementById('view-modal').style.display = 'none';
+    }
+
+    // Format details for display
+    function formatDetails(r) {
+        let d = r.details;
+        if (r.type === 'building') {
+            return `<b>Service:</b> ${capitalize(d.service)}, <b>Purpose:</b> ${d.purpose}, <b>Location:</b> ${d.location}, <b>Manpower:</b> ${d.manpower.map(m => m.name + (m.remarks ? ' ('+m.remarks+')' : '')).join(', ')}, <b>Date:</b> ${d.date}, <b>Time:</b> ${d.time}`;
+        }
+        if (r.type === 'motorpool') {
+            return `<b>Purpose:</b> ${d.purpose}, <b>Requester:</b> ${d.requester}, <b>Contact:</b> ${d.contact}`;
+        }
+        if (r.type === 'events') {
+            if (d.requestType === 'events') {
+                return `<b>Venue:</b> ${d.venue}, <b>Payment Order:</b> ${d.paymentOrder}, <b>Date:</b> ${d.date}, <b>Time:</b> ${d.time || ''}, <b>Purpose:</b> ${d.purpose}`;
+            } else if (d.requestType === 'social') {
+                let eq = '';
+                if (d.socialType === 'others' && d.otherEquipments && d.otherEquipments.length) {
+                    eq = `<br><b>Other Equipments:</b> ${d.otherEquipments.map(e => `${e.name} (Qty: ${e.qty})`).join(', ')}`;
+                }
+                return `<b>Type:</b> ${d.socialType}, <b>Qty:</b> ${d.socialQty}, <b>Condition:</b> ${d.socialCondition}, <b>Date:</b> ${d.date}, <b>Purpose:</b> ${d.purpose}${eq}`;
+            } else {
+                return `<b>Date:</b> ${d.date}, <b>Purpose:</b> ${d.purpose}`;
+            }
+        }
+        if (r.type === 'withdrawal') {
+            let d = r.details;
+            let optionMap = {
+                'eco-bricks': 'Eco Bricks',
+                'eco-blocks': 'Eco Blocks',
+                'top-soil': 'Top Soil',
+                'vermi-compost': 'Vermi-Compost',
+                'soil-enhancer': 'Soil Enhancer',
+                'sacks': 'Sacks',
+                'vehicle-medium-dumptruck': 'Medium Dumptruck',
+                'vehicle-small-dumptruck': 'Small Dumptruck',
+                'vehicle-double-cab': 'Double Cab'
+            };
+            let str = `<b>Request:</b> ${optionMap[d.option] || d.option}`;
+            if (d.qty) {
+                if (d.option === 'eco-bricks' || d.option === 'eco-blocks') {
+                    str += `, <b>Quantity:</b> ${d.qty} pcs`;
+                } else if (d.option === 'vermi-compost' || d.option === 'sacks') {
+                    str += `, <b>Quantity:</b> ${d.qty} kg`;
+                }
+            }
+            if (d.driver) {
+                str += `, <b>Driver:</b> ${d.driver}`;
+            }
+            str += `, <b>Purpose:</b> ${d.purpose}, <b>Requester:</b> ${d.requester}, <b>Contact:</b> ${d.contact}, <b>Address:</b> ${d.address}`;
+            return str;
+        }
+        return '';
+    }
+    function capitalize(str) {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Notification logic
+    function notifyAdmin(req) {
+        if (!users.find(u => u.role === 'admin')) return;
+        document.getElementById('notif-content').innerHTML = `<div class="notif-item"><b>${req.user}</b> submitted a <b>${capitalize(req.type)}</b> request.</div>`;
+        document.getElementById('notif-box').style.display = 'block';
+        document.getElementById('notif-sound').play();
+        setTimeout(() => {
+            document.getElementById('notif-box').style.display = 'none';
+        }, 3000);
+        updateNotifBell();
+    }
+    function showNotifBox() {
+        document.getElementById('notif-box').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('notif-box').style.display = 'none';
+        }, 3000);
+    }
+    function updateNotifBell() {
+        // Admin
+        const adminDot = document.getElementById('admin-notif-dot');
+        const adminCount = document.getElementById('admin-notif-count');
+        const adminPending = requests.filter(r => r.status === 'pending').length;
+        if (adminDot) {
+            adminDot.style.display = adminPending > 0 ? 'block' : 'none';
+        }
+        if (adminCount) {
+            adminCount.style.display = adminPending > 0 ? 'inline-block' : 'none';
+            adminCount.textContent = adminPending;
+        }
+        // User
+        const userDot = document.getElementById('user-notif-dot');
+        const userCount = document.getElementById('user-notif-count');
+        const userNotif = requests.filter(r => r.user === currentUser?.fullname && r.status === 'pending').length;
+        if (userDot) {
+            userDot.style.display = userNotif > 0 ? 'block' : 'none';
+        }
+        if (userCount) {
+            userCount.style.display = userNotif > 0 ? 'inline-block' : 'none';
+            userCount.textContent = userNotif;
+        }
+    }
+
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.id === 'social-type') {
+            const val = e.target.value;
+            document.getElementById('other-equipment-fields').style.display = val === 'others' ? '' : 'none';
+        }
+    });
+
+    function renderWithdrawalDetails() {
+        const opt = document.getElementById('withdrawal-option').value;
+        let html = '';
+        if (opt === 'eco-bricks' || opt === 'eco-blocks') {
+            html = `
+                <label>Quantity (pcs)</label>
+                <input type="number" id="withdrawal-qty" min="1" required>
+            `;
+        } else if (opt === 'vermi-compost' || opt === 'sacks') {
+            html = `
+                <label>Quantity (kg)</label>
+                <input type="number" id="withdrawal-qty" min="1" required>
+            `;
+        } else if (opt === 'vehicle-medium-dumptruck' || opt === 'vehicle-small-dumptruck' || opt === 'vehicle-double-cab') {
+            html = `
+                <label>Driver Full Name</label>
+                <input type="text" id="withdrawal-driver" required>
+            `;
+        }
+        document.getElementById('withdrawal-details').innerHTML = html;
+    }
+
+    let rejectIdx = null;
+
+    function openRejectModal(idx) {
+        rejectIdx = idx;
+        document.getElementById('reject-reason').value = '';
+        document.getElementById('reject-modal').style.display = 'flex';
+    }
+    function closeRejectModal() {
+        document.getElementById('reject-modal').style.display = 'none';
+        rejectIdx = null;
+    }
+    function submitReject() {
+        if (rejectIdx === null) return false;
+        const reason = document.getElementById('reject-reason').value.trim();
+        if (!reason) return false;
+        const req = requests[rejectIdx];
+        fetch(`http://localhost:3001/api/requests/${req.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'rejected', rejectReason: reason, approvedBy: currentUser.fullname })
+        })
+        .then(res => res.json())
+        .then(() => {
+            closeRejectModal();
+            fetch('http://localhost:3001/api/requests')
+                .then(res => res.json())
+                .then(data => {
+                    requests = data;
+                    renderAdminRequests();
+                    renderUserRequests();
+                    updateNotifBell();
+                });
+        });
+        return false;
+    }
+
+    function renderAccountsList() {
+        const list = document.getElementById('accounts-list');
+        if (!list) return;
+        // Fetch users from backend
+        fetch('http://localhost:3001/api/users')
+            .then(res => res.json())
+            .then(data => {
+                if (data.length === 0) {
+                    list.innerHTML = `<div style="color:#23272f;font-size:1.1rem;font-weight:700;text-align:center;padding:1.5rem 0;">No accounts found.</div>`;
+                    return;
+                }
+                list.innerHTML = `
+                    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;">
+                        <thead>
+                            <tr style="background:linear-gradient(90deg,#1abc9c 0%,#2980b9 100%);color:#fff;">
+                                <th style="padding:0.7rem;">Full Name</th>
+                                <th style="padding:0.7rem;">Position</th>
+                                <th style="padding:0.7rem;">Role</th>
+                                <th style="padding:0.7rem;">Request Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(u => `
+                                <tr>
+                                    <td style="padding:0.7rem;color:#23272f;font-weight:700;">${u.fullname}</td>
+                                    <td style="padding:0.7rem;color:#2980b9;">${u.position}</td>
+                                    <td style="padding:0.7rem;color:#1abc9c;">${capitalize(u.role)}</td>
+                                    <td style="padding:0.7rem;">
+                                        ${requests.filter(r => r.user === u.fullname).map(r =>
+                                            `<span class="request-status ${r.status}" style="margin-right:0.3rem;">${capitalize(r.status)}</span>`
+                                        ).join('') || '<span style="color:#888;">No Request</span>'}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            });
+    }
+    function printAccounts() {
+        const printContents = document.getElementById('accounts-list').innerHTML;
+        const win = window.open('', '', 'height=700,width=900');
+        win.document.write('<html><head><title>Accounts List</title>');
+        win.document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>');
+        win.document.write('<style>body{font-family:Montserrat,Arial,sans-serif;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #e3e9f0;padding:0.7rem;}th{background:#1abc9c;color:#fff;}tr:nth-child(even){background:#f7fafd;}</style>');
+        win.document.write('</head><body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+        win.document.close();
+        win.print();
+    }
+
+    // Fetch requests from server
+    fetch('http://localhost:3001/api/requests')
+        .then(res => res.json())
+        .then(data => {
+            requests = data;
+            renderAdminRequests();
+            renderUserRequests();
+        });
+    </script>
+
+    <footer style="margin-top:3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(90deg, #1abc9c 0%, #2980b9 100%);border-top:2px solid var(--main-green);padding:2rem 1rem 1.2rem 1rem;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;">
+            <i class="fas fa-tools" style="font-size:2.2rem;color:var(--main-blue);"></i>
+            <span style="font-size:1.25rem;color:var(--main-green);font-weight:700;">
+                CITY GENERAL SERVICES REQUEST PORTAL
+            </span>
+        </div>
+        <div style="margin-top:0.7rem;color:var(--main-dark);font-size:1.05rem;text-align:center;max-width:600px;">
+            This portal is designed to streamline and manage requests for tools, equipment, and services for the City General Services Office of Isabela City, Basilan. Its purpose is to provide an efficient, transparent, and user-friendly platform for both staff and administrators.
+        </div>
+        <div style="margin-top:1.2rem;color:var(--main-blue);font-size:1.1rem;font-weight:600;">
+            <i class="fas fa-signature"></i> Developed by Efren Faminialagao
+        </div>
+    </footer>
+</body>
+</html>
