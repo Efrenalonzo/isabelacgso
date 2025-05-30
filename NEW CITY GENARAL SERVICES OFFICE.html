@@ -1038,7 +1038,6 @@
     let requests = [];
     let currentUser = null;
     let manpowerArr = [];
-    // let rejectIdx = null; // Removed duplicate declaration to avoid redeclaration error
     let otherEquipments = [];
 
     // Tab switching for login/register
@@ -1075,7 +1074,7 @@
         }
     }
 
-    // Registration
+    // Registration (restore in-memory logic)
     function register(e) {
         e.preventDefault();
         const user = {
@@ -1090,54 +1089,40 @@
             alert('Username already exists!');
             return false;
         }
-        // Replace users.push(user) with:
-        fetch('http://localhost:3001/api/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.error) return alert(data.error);
-            alert('Registration successful! You can now login.');
-            showTab('login');
-        });
+        users.push(user);
+        alert('Registration successful! You can now login.');
+        showTab('login');
         return false;
     }
 
-    // Login
+    // Login (restore in-memory logic)
     function login(e) {
         e.preventDefault();
         const role = document.getElementById('login-role').value;
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
-        fetch('http://localhost:3001/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password, role })
-        })
-        .then(res => res.json())
-        .then(user => {
-            if (user.error) return alert(user.error);
-            currentUser = user;
-            document.getElementById('auth-section').style.display = 'none';
-            if (user.role === 'admin') {
-                document.getElementById('admin-dashboard').style.display = '';
-                document.getElementById('user-dashboard').style.display = 'none';
-                // Set full name and position in one line, position in parentheses, both in main-blue
-                document.getElementById('admin-fullname').innerHTML =
-                    `Welcome, ${currentUser.fullname} <span style="color:var(--main-blue);font-weight:600;">(${currentUser.position})</span>`;
-                renderAdminRequests();
-                updateNotifBell();
-            } else {
-                document.getElementById('user-dashboard').style.display = '';
-                document.getElementById('admin-dashboard').style.display = 'none';
-                document.getElementById('user-fullname').innerHTML =
-                    `Welcome, ${currentUser.fullname} <span style="color:var(--main-blue);font-weight:600;">(${currentUser.position})</span>`;
-                renderUserRequests();
-                updateNotifBell();
-            }
-        });
+        const user = users.find(u => u.username === username && u.password === password && u.role === role);
+        if (!user) {
+            alert('Invalid credentials!');
+            return false;
+        }
+        currentUser = user;
+        document.getElementById('auth-section').style.display = 'none';
+        if (user.role === 'admin') {
+            document.getElementById('admin-dashboard').style.display = '';
+            document.getElementById('user-dashboard').style.display = 'none';
+            document.getElementById('admin-fullname').innerHTML =
+                `Welcome, ${currentUser.fullname} <span style="color:var(--main-blue);font-weight:600;">(${currentUser.position})</span>`;
+            renderAdminRequests();
+            updateNotifBell();
+        } else {
+            document.getElementById('user-dashboard').style.display = '';
+            document.getElementById('admin-dashboard').style.display = 'none';
+            document.getElementById('user-fullname').innerHTML =
+                `Welcome, ${currentUser.fullname} <span style="color:var(--main-blue);font-weight:600;">(${currentUser.position})</span>`;
+            renderUserRequests();
+            updateNotifBell();
+        }
         return false;
     }
 
@@ -1479,7 +1464,7 @@
         renderOtherEquipmentList();
     }
 
-    // Submit request
+    // Submit request (restore in-memory logic)
     function submitRequest(type, details) {
         const req = {
             type,
@@ -1493,464 +1478,75 @@
 
         // Show notification
         showUserNotification('Your request has been submitted!');
-        // Close modal after a short delay
         setTimeout(closeServiceModal, 1200);
 
-        // Refresh requests from server
-        fetch('http://localhost:3001/api/requests', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(req)
-        })
-        .then(res => res.json())
-        .then(data => {
-            showUserNotification('Your request has been submitted!');
-            setTimeout(closeServiceModal, 1200);
-            // Refresh requests from server
-            fetch('http://localhost:3001/api/requests')
-                .then(res => res.json())
-                .then(data => {
-                    requests = data;
-                    renderUserRequests();
-                    renderAdminRequests();
-                    updateNotifBell();
-                });
-            notifyAdmin({user: currentUser.fullname, type});
-        });
+        renderUserRequests();
+        renderAdminRequests();
+        updateNotifBell();
+        notifyAdmin({user: currentUser.fullname, type});
     }
 
-    // Add this function if not present, or update to make it visible and auto-hide
-    function showUserNotification(msg) {
-        let notif = document.getElementById('notif-box');
-        notif.querySelector('.notif-title').innerHTML = '<i class="fas fa-bell"></i> Notification';
-        document.getElementById('notif-content').innerHTML = `<div class="notif-item">${msg}</div>`;
-        notif.style.display = 'block';
-        setTimeout(() => {
-            notif.style.display = 'none';
-        }, 2000);
-    }
-
-    // Render user requests
-    function renderUserRequests() {
-        const list = document.getElementById('user-requests-list');
-        const myReqs = requests.filter(r => r.user === currentUser.fullname);
-        if (myReqs.length === 0) {
-            list.innerHTML = `<div style="color:#fff;font-size:1.2rem;font-weight:700;text-align:center;padding:2rem 0;text-shadow:0 2px 8px #1abc9c99,0 1px 0 #23272f;">No requests yet.</div>`;
-            return;
-        }
-        list.innerHTML = myReqs.map(r => {
-            const realIdx = requests.indexOf(r);
-            return `
-                <div class="request-item">
-                    <div><b>Type:</b> ${capitalize(r.type)}</div>
-                    <div><b>Status:</b> <span class="request-status ${r.status}">${capitalize(r.status)}</span></div>
-                    <div><b>Details:</b> ${formatDetails(r)}</div>
-                    ${r.status === 'rejected' && r.rejectReason ? `<div style="color:var(--main-red);"><b>Rejected Reason:</b> ${r.rejectReason}</div>` : ''}
-                    <button class="view-btn" onclick="viewRequest(${realIdx})"><i class="fas fa-eye"></i> View</button>
-                </div>
-            `;
-        }).join('');
-    }
-
-    function renderAdminRequests() {
-        const list = document.getElementById('admin-requests-list');
-        if (!list) return;
-        if (requests.length === 0) {
-            list.innerHTML = `<div style="color:#23272f;font-size:1.2rem;font-weight:700;text-align:center;padding:2rem 0;">No requests yet.</div>`;
-            return;
-        }
-        list.innerHTML = requests.map((r, idx) => `
-            <div class="request-item">
-                <div><b>User:</b> <span style="color:#fff;">${r.user}</span></div>
-                <div><b>Type:</b> ${capitalize(r.type)}</div>
-                <div><b>Status:</b> <span class="request-status">${capitalize(r.status)}</span></div>
-                <div><b>Details:</b> ${formatDetails(r)}</div>
-                ${r.status === 'rejected' && r.rejectReason ? `<div style="color:var(--main-red);"><b>Rejected Reason:</b> ${r.rejectReason}</div>` : ''}
-                <button class="view-btn" onclick="viewRequest(${idx})"><i class="fas fa-eye"></i> View</button>
-                ${r.status === 'pending' ? `
-                    <div style="margin-top:0.7rem;">
-                        <button class="approve-btn" onclick="approveRequest(${idx})"><i class="fas fa-check"></i> Approve</button>
-                        <button class="reject-btn" onclick="openRejectModal(${idx})"><i class="fas fa-times"></i> Reject</button>
-                    </div>
-                ` : ''}
-            </div>
-        `).join('');
-        renderAccountsList();
-    }
-
-    // Track admin who approved
-    let lastApprover = null;
-
-    // Modify approveRequest to store admin fullname
+    // Approve/reject (restore in-memory logic)
     function approveRequest(idx) {
-        const req = requests[idx];
-        fetch(`http://localhost:3001/api/requests/${req.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'approved', rejectReason: '', approvedBy: currentUser.fullname })
-        })
-        .then(res => res.json())
-        .then(() => {
-            fetch('http://localhost:3001/api/requests')
-                .then(res => res.json())
-                .then(data => {
-                    requests = data;
-                    renderAdminRequests();
-                    renderUserRequests();
-                    updateNotifBell();
-                });
-        });
-    }
-
-    // Update viewRequest to show print button and admin name if approved
-    function viewRequest(idx) {
-        const r = requests[idx];
-        // Format the date
-        const dateSubmitted = new Date(r.created).toLocaleString();
-
-        let html = `
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.7rem;">
-                <div>
-                    <b>User:</b> <span style="color:#fff;">${r.user}</span>
-                </div>
-                <div style="color:#2980b9;font-size:0.98rem;text-align:right;">
-                    <b>Date Submitted:</b> <span>${dateSubmitted}</span>
-                </div>
-            </div>
-            <div style="margin-bottom:0.7rem;"><b>Type:</b> <span style="color:#fff;">${capitalize(r.type)}</span></div>
-            <div style="margin-bottom:0.7rem;"><b>Status:</b> <span class="request-status" style="color:#fff;">${capitalize(r.status)}</span></div>
-        `;
-
-        if (r.type === 'building') {
-            html += `
-                <div style="margin-bottom:0.7rem;"><b>Service:</b> <span style="color:#fff;">${capitalize(r.details.service)}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Location:</b> <span style="color:#fff;">${r.details.location}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Date Needed:</b> <span style="color:#fff;">${r.details.date}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Time Needed:</b> <span style="color:#fff;">${r.details.time}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Other Request:</b> <span style="color:#fff;">${r.details.other || '-'}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Manpower Assigned:</b> <span style="color:#fff;">${
-                    r.details.manpower && r.details.manpower.length
-                        ? r.details.manpower.map(m => m.name + (m.remarks ? ` (${m.remarks})` : '')).join(', ')
-                        : 'None'
-                }</span></div>
-            `;
-        } else if (type === 'motorpool') {
-            html += `
-                <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
-            `;
-        } else if (r.type === 'events') {
-            if (r.details.requestType === 'events') {
-                html += `
-                    <div style="margin-bottom:0.7rem;"><b>Venue:</b> <span style="color:#fff;">${r.details.venue}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Payment Order:</b> <span style="color:#fff;">${r.details.paymentOrder}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Date:</b> <span style="color:#fff;">${r.details.date}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Time:</b> <span style="color:#fff;">${r.details.time || ''}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Office/Agency:</b> <span style="color:#fff;">${r.details.office}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Address:</b> <span style="color:#fff;">${r.details.address}</span></div>
-                `;
-            } else if (r.details.requestType === 'social') {
-                html += `
-                    <div style="margin-bottom:0.7rem;"><b>Social Service Type:</b> <span style="color:#fff;">${r.details.socialType}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Quantity:</b> <span style="color:#fff;">${r.details.socialQty}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Condition:</b> <span style="color:#fff;">${r.details.socialCondition}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Date:</b> <span style="color:#fff;">${r.details.date}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Office/Agency:</b> <span style="color:#fff;">${r.details.office}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Address:</b> <span style="color:#fff;">${r.details.address}</span></div>
-                    ${
-                        r.details.socialType === 'others' && r.details.otherEquipments && r.details.otherEquipments.length
-                            ? `<div style="margin-bottom:0.7rem;"><b>Other Equipments:</b> <span style="color:#fff;">${r.details.otherEquipments.map(e => `${e.name} (Qty: ${e.qty})`).join(', ')}</span></div>`
-                            : ''
-                    }
-                `;
-            } else {
-                html += `
-                    <div style="margin-bottom:0.7rem;"><b>Date:</b> <span style="color:#fff;">${r.details.date}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Office/Agency:</b> <span style="color:#fff;">${r.details.office}</span></div>
-                    <div style="margin-bottom:0.7rem;"><b>Address:</b> <span style="color:#fff;">${r.details.address}</span></div>
-                `;
-            }
-        } else if (r.type === 'withdrawal') {
-            let optionMap = {
-                'eco-bricks': 'Eco Bricks',
-                'eco-blocks': 'Eco Blocks',
-                'top-soil': 'Top Soil',
-                'vermi-compost': 'Vermi-Compost',
-                'soil-enhancer': 'Soil Enhancer',
-                'sacks': 'Sacks',
-                'vehicle-medium-dumptruck': 'Medium Dumptruck',
-                'vehicle-small-dumptruck': 'Small Dumptruck',
-                'vehicle-double-cab': 'Double Cab'
-            };
-            html += `
-                <div style="margin-bottom:0.7rem;"><b>Request Option:</b> <span style="color:#fff;">${optionMap[r.details.option] || r.details.option}</span></div>
-                ${r.details.qty ? `<div style="margin-bottom:0.7rem;"><b>Quantity:</b> <span style="color:#fff;">${r.details.qty} ${r.details.option === 'eco-bricks' || r.details.option === 'eco-blocks' ? 'pcs' : 'kg'}</span></div>` : ''}
-
-                ${r.details.driver ? `<div style="margin-bottom:0.7rem;"><b>Driver Assigned:</b> <span style="color:#fff;">${r.details.driver}</span></div>` : ''}
-                <div style="margin-bottom:0.7rem;"><b>Purpose:</b> <span style="color:#fff;">${r.details.purpose}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Requester:</b> <span style="color:#fff;">${r.details.requester}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Contact:</b> <span style="color:#fff;">${r.details.contact}</span></div>
-                <div style="margin-bottom:0.7rem;"><b>Address:</b> <span style="color:#fff;">${ r.details.address}</span></div>
-            `;
-        }
-
-        // Insert this after all details:
-
-        if (r.status === 'approved' && r.approvedBy) {
-            html += `<div style="margin-bottom:0.7rem;"><b>Approved By:</b> <span style="color:#1abc9c;">${r.approvedBy}</span></div>
-            <button class="view-print-btn" onclick="window.print()" style="margin-top:1rem;background:#1abc9c;color:#fff;border:none;border-radius:7px;padding:0.6rem 1.5rem;font-size:1.1rem;font-weight:600;cursor:pointer;">
-                <i class="fas fa-print"></i> Print
-            </button>`;
-        }
-
-        if (r.status === 'rejected' && r.rejectReason) {
-            html += `<div style="color:var(--main-red);margin-bottom:0.7rem;"><b>Rejected Reason:</b> ${r.rejectReason}</div>`;
-        }
-        html += `<div style="margin-bottom:0.7rem;"><b>Date Submitted:</b> <span style="color:#2980b9;">${new Date(r.created).toLocaleString()}</span></div>`;
-
-        document.getElementById('view-details-section').innerHTML = html;
-        document.getElementById('view-modal').style.display = 'flex';
-    }
-    function closeViewModal() {
-        document.getElementById('view-modal').style.display = 'none';
-    }
-
-    // Format details for display
-    function formatDetails(r) {
-        let d = r.details;
-        if (r.type === 'building') {
-            return `<b>Service:</b> ${capitalize(d.service)}, <b>Purpose:</b> ${d.purpose}, <b>Location:</b> ${d.location}, <b>Manpower:</b> ${d.manpower.map(m => m.name + (m.remarks ? ' ('+m.remarks+')' : '')).join(', ')}, <b>Date:</b> ${d.date}, <b>Time:</b> ${d.time}`;
-        }
-        if (r.type === 'motorpool') {
-            return `<b>Purpose:</b> ${d.purpose}, <b>Requester:</b> ${d.requester}, <b>Contact:</b> ${d.contact}`;
-        }
-        if (r.type === 'events') {
-            if (d.requestType === 'events') {
-                return `<b>Venue:</b> ${d.venue}, <b>Payment Order:</b> ${d.paymentOrder}, <b>Date:</b> ${d.date}, <b>Time:</b> ${d.time || ''}, <b>Purpose:</b> ${d.purpose}`;
-            } else if (d.requestType === 'social') {
-                let eq = '';
-                if (d.socialType === 'others' && d.otherEquipments && d.otherEquipments.length) {
-                    eq = `<br><b>Other Equipments:</b> ${d.otherEquipments.map(e => `${e.name} (Qty: ${e.qty})`).join(', ')}`;
-                }
-                return `<b>Type:</b> ${d.socialType}, <b>Qty:</b> ${d.socialQty}, <b>Condition:</b> ${d.socialCondition}, <b>Date:</b> ${d.date}, <b>Purpose:</b> ${d.purpose}${eq}`;
-            } else {
-                return `<b>Date:</b> ${d.date}, <b>Purpose:</b> ${d.purpose}`;
-            }
-        }
-        if (r.type === 'withdrawal') {
-            let d = r.details;
-            let optionMap = {
-                'eco-bricks': 'Eco Bricks',
-                'eco-blocks': 'Eco Blocks',
-                'top-soil': 'Top Soil',
-                'vermi-compost': 'Vermi-Compost',
-                'soil-enhancer': 'Soil Enhancer',
-                'sacks': 'Sacks',
-                'vehicle-medium-dumptruck': 'Medium Dumptruck',
-                'vehicle-small-dumptruck': 'Small Dumptruck',
-                'vehicle-double-cab': 'Double Cab'
-            };
-            let str = `<b>Request:</b> ${optionMap[d.option] || d.option}`;
-            if (d.qty) {
-                if (d.option === 'eco-bricks' || d.option === 'eco-blocks') {
-                    str += `, <b>Quantity:</b> ${d.qty} pcs`;
-                } else if (d.option === 'vermi-compost' || d.option === 'sacks') {
-                    str += `, <b>Quantity:</b> ${d.qty} kg`;
-                }
-            }
-            if (d.driver) {
-                str += `, <b>Driver:</b> ${d.driver}`;
-            }
-            str += `, <b>Purpose:</b> ${d.purpose}, <b>Requester:</b> ${d.requester}, <b>Contact:</b> ${d.contact}, <b>Address:</b> ${d.address}`;
-            return str;
-        }
-        return '';
-    }
-    function capitalize(str) {
-        if (!str) return '';
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    // Notification logic
-    function notifyAdmin(req) {
-        if (!users.find(u => u.role === 'admin')) return;
-        document.getElementById('notif-content').innerHTML = `<div class="notif-item"><b>${req.user}</b> submitted a <b>${capitalize(req.type)}</b> request.</div>`;
-        document.getElementById('notif-box').style.display = 'block';
-        document.getElementById('notif-sound').play();
-        setTimeout(() => {
-            document.getElementById('notif-box').style.display = 'none';
-        }, 3000);
+        requests[idx].status = 'approved';
+        requests[idx].approvedBy = currentUser.fullname;
+        renderAdminRequests();
+        renderUserRequests();
         updateNotifBell();
     }
-    function showNotifBox() {
-        document.getElementById('notif-box').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('notif-box').style.display = 'none';
-        }, 3000);
-    }
-    function updateNotifBell() {
-        // Admin
-        const adminDot = document.getElementById('admin-notif-dot');
-        const adminCount = document.getElementById('admin-notif-count');
-        const adminPending = requests.filter(r => r.status === 'pending').length;
-        if (adminDot) {
-            adminDot.style.display = adminPending > 0 ? 'block' : 'none';
-        }
-        if (adminCount) {
-            adminCount.style.display = adminPending > 0 ? 'inline-block' : 'none';
-            adminCount.textContent = adminPending;
-        }
-        // User
-        const userDot = document.getElementById('user-notif-dot');
-        const userCount = document.getElementById('user-notif-count');
-        const userNotif = requests.filter(r => r.user === currentUser?.fullname && r.status === 'pending').length;
-        if (userDot) {
-            userDot.style.display = userNotif > 0 ? 'block' : 'none';
-        }
-        if (userCount) {
-            userCount.style.display = userNotif > 0 ? 'inline-block' : 'none';
-            userCount.textContent = userNotif;
-        }
-    }
 
-    document.addEventListener('change', function(e) {
-        if (e.target && e.target.id === 'social-type') {
-            const val = e.target.value;
-            document.getElementById('other-equipment-fields').style.display = val === 'others' ? '' : 'none';
-        }
-    });
-
-    function renderWithdrawalDetails() {
-        const opt = document.getElementById('withdrawal-option').value;
-        let html = '';
-        if (opt === 'eco-bricks' || opt === 'eco-blocks') {
-            html = `
-                <label>Quantity (pcs)</label>
-                <input type="number" id="withdrawal-qty" min="1" required>
-            `;
-        } else if (opt === 'vermi-compost' || opt === 'sacks') {
-            html = `
-                <label>Quantity (kg)</label>
-                <input type="number" id="withdrawal-qty" min="1" required>
-            `;
-        } else if (opt === 'vehicle-medium-dumptruck' || opt === 'vehicle-small-dumptruck' || opt === 'vehicle-double-cab') {
-            html = `
-                <label>Driver Full Name</label>
-                <input type="text" id="withdrawal-driver" required>
-            `;
-        }
-        document.getElementById('withdrawal-details').innerHTML = html;
-    }
-
-    let rejectIdx = null;
-
-    function openRejectModal(idx) {
-        rejectIdx = idx;
-        document.getElementById('reject-reason').value = '';
-        document.getElementById('reject-modal').style.display = 'flex';
-    }
-    function closeRejectModal() {
-        document.getElementById('reject-modal').style.display = 'none';
-        rejectIdx = null;
-    }
     function submitReject() {
         if (rejectIdx === null) return false;
         const reason = document.getElementById('reject-reason').value.trim();
         if (!reason) return false;
-        const req = requests[rejectIdx];
-        fetch(`http://localhost:3001/api/requests/${req.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'rejected', rejectReason: reason, approvedBy: currentUser.fullname })
-        })
-        .then(res => res.json())
-        .then(() => {
-            closeRejectModal();
-            fetch('http://localhost:3001/api/requests')
-                .then(res => res.json())
-                .then(data => {
-                    requests = data;
-                    renderAdminRequests();
-                    renderUserRequests();
-                    updateNotifBell();
-                });
-        });
+        requests[rejectIdx].status = 'rejected';
+        requests[rejectIdx].rejectReason = reason;
+        requests[rejectIdx].approvedBy = currentUser.fullname;
+        closeRejectModal();
+        renderAdminRequests();
+        renderUserRequests();
+        updateNotifBell();
         return false;
     }
 
+    // Render accounts list (restore in-memory logic)
     function renderAccountsList() {
         const list = document.getElementById('accounts-list');
         if (!list) return;
-        // Fetch users from backend
-        fetch('http://localhost:3001/api/users')
-            .then(res => res.json())
-            .then(data => {
-                if (data.length === 0) {
-                    list.innerHTML = `<div style="color:#23272f;font-size:1.1rem;font-weight:700;text-align:center;padding:1.5rem 0;">No accounts found.</div>`;
-                    return;
-                }
-                list.innerHTML = `
-                    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;">
-                        <thead>
-                            <tr style="background:linear-gradient(90deg,#1abc9c 0%,#2980b9 100%);color:#fff;">
-                                <th style="padding:0.7rem;">Full Name</th>
-                                <th style="padding:0.7rem;">Position</th>
-                                <th style="padding:0.7rem;">Role</th>
-                                <th style="padding:0.7rem;">Request Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.map(u => `
-                                <tr>
-                                    <td style="padding:0.7rem;color:#23272f;font-weight:700;">${u.fullname}</td>
-                                    <td style="padding:0.7rem;color:#2980b9;">${u.position}</td>
-                                    <td style="padding:0.7rem;color:#1abc9c;">${capitalize(u.role)}</td>
-                                    <td style="padding:0.7rem;">
-                                        ${requests.filter(r => r.user === u.fullname).map(r =>
-                                            `<span class="request-status ${r.status}" style="margin-right:0.3rem;">${capitalize(r.status)}</span>`
-                                        ).join('') || '<span style="color:#888;">No Request</span>'}
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            });
-    }
-    function printAccounts() {
-        const printContents = document.getElementById('accounts-list').innerHTML;
-        const win = window.open('', '', 'height=700,width=900');
-        win.document.write('<html><head><title>Accounts List</title>');
-        win.document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>');
-        win.document.write('<style>body{font-family:Montserrat,Arial,sans-serif;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #e3e9f0;padding:0.7rem;}th{background:#1abc9c;color:#fff;}tr:nth-child(even){background:#f7fafd;}</style>');
-        win.document.write('</head><body>');
-        win.document.write(printContents);
-        win.document.write('</body></html>');
-        win.document.close();
-        win.print();
+        if (users.length === 0) {
+            list.innerHTML = `<div style="color:#23272f;font-size:1.1rem;font-weight:700;text-align:center;padding:1.5rem 0;">No accounts found.</div>`;
+            return;
+        }
+        list.innerHTML = `
+            <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;">
+                <thead>
+                    <tr style="background:linear-gradient(90deg,#1abc9c 0%,#2980b9 100%);color:#fff;">
+                        <th style="padding:0.7rem;">Full Name</th>
+                        <th style="padding:0.7rem;">Position</th>
+                        <th style="padding:0.7rem;">Role</th>
+                        <th style="padding:0.7rem;">Request Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${users.map(u => `
+                        <tr>
+                            <td style="padding:0.7rem;color:#23272f;font-weight:700;">${u.fullname}</td>
+                            <td style="padding:0.7rem;color:#2980b9;">${u.position}</td>
+                            <td style="padding:0.7rem;color:#1abc9c;">${capitalize(u.role)}</td>
+                            <td style="padding:0.7rem;">
+                                ${requests.filter(r => r.user === u.fullname).map(r =>
+                                    `<span class="request-status ${r.status}" style="margin-right:0.3rem;">${capitalize(r.status)}</span>`
+                                ).join('') || '<span style="color:#888;">No Request</span>'}
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
     }
 
-    // Fetch requests from server
-    fetch('http://localhost:3001/api/requests')
-        .then(res => res.json())
-        .then(data => {
-            requests = data;
-            renderAdminRequests();
-            renderUserRequests();
-        });
+    // Remove all fetch calls at the bottom
+    // ...existing code...
     </script>
 
     <footer style="margin-top:3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(90deg, #1abc9c 0%, #2980b9 100%);border-top:2px solid var(--main-green);padding:2rem 1rem 1.2rem 1rem;">
